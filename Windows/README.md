@@ -1,0 +1,99 @@
+---- WINDOWS/SERVER README ----
+
+checklist:
+- ALWAYS DO FORENSICS FIRST
+- enable auto-updating and update windows
+- check startup apps in taskmgr
+- remove all useless programs
+- fix uac (second from top)
+- harden brower
+  - disable all addons and plugins except in readme
+  - update browser
+  - turn on high privacy/security settings
+    - GENERAL
+      - make default browser
+      - when starts, show blank page
+      - home page -> default
+      - allow firefox to auto install updates
+      - use bg service to install upates
+      - auto update search engines
+    - PRIVACY/SECURITY
+      - don't remember logins
+      - don't use master password
+      - firefox will never remember history
+      - address bar -> uncheck all three
+      - use tracking protection (always)
+      - block pop-up windows
+      - warn when websites try to install
+      - deceptive content -> check all 3
+      - personal certificate every time
+      - check query ocsp responer servers
+- configure windows defender
+  - make sure gpos arent restricting updates (it might tell you in settings app)
+  - defender desktop version -> launch tools -> options
+    - enable auto scan my computer
+    - use default recommended actions
+    - enable real-time protection
+    - advanced -> use heuristics and scan archive files
+    - update definitions
+- show hidden files
+- disable shared folders based on readme file
+- open "C:\Windows\System32\drivers\etc\hosts" in notepad and comment out (#) all lines not related to cypat
+- check ports at windows firewall adv -> inbound/outbound rules
+- check windows firewall properties
+  - if file/print sharing is required:
+    - go to inbound rules -> file and printer sharing group
+    - allow all labeled "echo" and "smb" and disable everything else
+  - ports at inbound/outbound rules
+  - log file kept at %systemroot%\system32\LogFiles\Firewall\pfireall.log
+- correct all GPOS in the following:
+  - computer config -> admin templates -> all settings ///// computer config -> windows settings -> security settings -> local policies -> security options
+    - sort by state BOTH WAYS and check if any don't say "Not Configured"
+  - change computer config -> admin templates -> windows components -> windows powershell -> turn on script execution to Disabled (might have to revert later)
+  - THIS IS NOT A COMPLETE LIST OF GPOS
+- backdoor ports red flags:
+  - local address of 0.0.0.0:[port number] means process is listening for any connection on that port
+  - :[::] has same meaning for IPv6
+  - check signatures of all processes
+  - make sure to investigate source folders of all malware you find
+- SERVICE CHECKER: https://blackviper.com/windows-services
+- PROCESS CHECKER: https://learn.microsoft.com/en-us/sysinternals/downloads/process-explorer#download
+- TCPVIEW: https://learn.microsoft.com/en-us/sysinternals/downloads/tcpview
+- VIRUSTOTAL: https://www.virustotal.com/gui/home/upload
+
+important commands:
+- ctrl-r shortcuts
+  - cmd
+  - powershell
+  - taskmgr
+  - wf.msc
+  - services.msc
+  - compmgmt.msc
+  - secpol.exe
+  - regedit
+  - gpedit.msc
+  - shrpubw.exe
+  - eventvwr.msc
+- DISM /Online /Cleanup-Image /RestoreHealth
+- SFC /scannow
+- sc query (services)
+- netstat -anb (ports)
+  - netsh advfirewall firewall add rule name="Allow Port" dir=in action=allow protocol=TCP localport=<port-number>
+  - netsh advfirewall firewall delete rule name="Disable Port" protocol=udp localport=<port-number>
+- netsh advfirewall firewall show rule name=all
+  - netsh advfirewall firewall add rule name="<name>" dir=in action=allow program="<path>" enable=yes
+  - netsh advfirewall firewall delete rule name="<name>" program="<path>"
+- cd %ProgramFiles%\Windows Defender
+  - MpCmdRun -Scan -ScanType 1
+  - MpCmdRun -Restore -ListAll
+  - MpCmdRun -Restore -Name <item-name>
+- net share <sharename>=<path> /Grant:<name of user/group>,<READ/CHANGE/FULL>
+  - net share <sharename> /Delete
+- net view \\localhost /all (view shared folders)
+- icacls * /RESET /T /C /Q (POWERSHELL, reset share and ntfs perms of folder, use cd first)
+- gpresult /r /scope:<user/computer> (POWERSHELL)
+- %SystemRoot%\System32\OptionalFeatures.exe (optional windows features)
+
+
+Bigger Checklist: https://docs.google.com/document/d/1iCdlGSa3PAgEbRcW6GmTSz39jDTVKQ9Ff0ZJQwhEJI4/edit?usp=sharing
+Better Checklist: https://docs.google.com/document/d/1aOZCWpOy3ocPMe-moYmBEPcf7hqtK7oz/edit#heading=h.gjdgxs
