@@ -83,9 +83,6 @@ if /i "%sharedFolders%"=="n" (
     echo Stop and disable Server service
     net stop Server
     sc config LanmanServer start= disabled
-
-    echo Remove File and Printer sharing Windows feature
-    powershell -Command "Disable-WindowsOptionalFeature -Online -FeatureName FS-FileServer, FS-FileServer-Search, FS-FileServer-Search-Service, FS-Resource-Manager, FS-SMB1, FS-SMB1Protocol, FS-SMB2"
 )
 
 echo Enable auditing? (y/n)
