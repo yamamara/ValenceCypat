@@ -1,9 +1,9 @@
 @echo off
 
 color 02
-title Team1CyPat Windows Script
+title ValenceCypat Windows Script
 
-set mainDir=C:\Users\%USERNAME%\Downloads\Team1CyPat-main\Team1CyPat-main\Windows
+set mainDir=C:\Users\%USERNAME%\Downloads\ValenceCypat-main\ValenceCypat-main\Windows
 
 NET SESSION >NUL 2>NUL
 if %errorlevel% neq 0 (

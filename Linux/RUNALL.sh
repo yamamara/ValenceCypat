@@ -7,7 +7,7 @@ fi
 
 
 current_user=$SUDO_USER
-cd "/home/$current_user/Downloads/Team1CyPat-main/Linux"
+cd "/home/$current_user/Downloads/ValenceCypat-main/Linux"
 
 bash misc.sh
 bash delbannedfiles.sh
@@ -33,5 +33,5 @@ cat SGID
 echo -n "Write these down somewhere. Press Enter to continue: "
 read
 
-cd "/home/$current_user/Downloads/Team1CyPat-main/Linux/hardening-master"
+cd "/home/$current_user/Downloads/ValenceCypat-main/Linux/hardening-master"
 bash ubuntu.sh
