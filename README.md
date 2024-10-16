@@ -8,4 +8,3 @@ These are the CyberPatriot scripts for our team Valence, based out of Poolesvill
 + Avadhut Mahamuni
 + Omkar Bantanur
 + William Park
-+ Ryan Chung
