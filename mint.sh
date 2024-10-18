@@ -8,46 +8,55 @@ adminArray=()
 
 # shellcheck disable=SC2013
 for name in $(cut -d: -f6 /etc/passwd | grep "^/home/" | sed 's|^/home/||'); do
-  userFound=0
-  adminFound=0
+  isUser=0
+  isAdmin=0
 
   for element in "${userArray[@]}"; do
       if [[ "$name" == "$element" ]]; then
-          userFound=1
+          isUser=1
           break
       fi
   done
 
-  if [[ $userFound == 0 ]]; then
+  if [[ $isUser == 0 ]]; then
     echo ""
     read -r -p "Delete $name? (y/n): " delete
 
     if [[ "$delete" = "y" ]]; then
       userdel -f "$name"
+      echo "Deleted $name"
     else
       read -r -p "Make $name administrator? (y/n): " admin
 
       if [[ "$admin" = "y" ]]; then
         adminArray+=("$name")
         usermod -aG sudo "$name"
-        read -r -p "$name's password: " password
-        echo "$name:$password" | chpasswd
+        echo "Added $name to sudoers"
+
+        # Escapes illegal characters found in password
+        echo "$name:$(printf '%q' "IloveCyberPatriot@28")" | chpasswd
+        echo "Changed $name's password to 'IloveCyberPatriot@28'"
       fi
 
       for element in "${adminArray[@]}"; do
           if [[ "$name" == "$element" ]]; then
-              adminFound=1
+              isAdmin=1
               break
           fi
       done
 
-      if [[ $adminFound == 0 ]]; then
+      if [[ $isAdmin == 0 ]]; then
         deluser "$name" sudo
+        echo "Removed $name from sudoers"
       fi
 
       passwd -x30 -n3 -w7 "$name"
+      echo "$name's max password age changed to 30 days"
+      echo "$name's min password age changed to 3 days"
+      echo "$name's password warning changed to 7 days"
+
       usermod -L "$name"
-      printTime "$name's password has been given a maximum age of 30 days, minimum of 3 days, and warning of 7 days. $name's account has been locked."
+      echo "$name's account has been locked"
     fi
   fi
 done
