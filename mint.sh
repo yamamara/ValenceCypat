@@ -33,17 +33,21 @@ for name in $(cut -d: -f6 /etc/passwd | grep "^/home/" | sed 's|^/home/||'); do
         read -r -p "$name's password: " password
         echo "$name:$password" | chpasswd
       fi
-    fi
-  fi
 
-  for element in "${adminArray[@]}"; do
-      if [[ "$name" == "$element" ]]; then
-          adminFound=1
-          break
+      for element in "${adminArray[@]}"; do
+          if [[ "$name" == "$element" ]]; then
+              adminFound=1
+              break
+          fi
+      done
+
+      if [[ $adminFound == 0 ]]; then
+        deluser "$name" sudo
       fi
-  done
 
-  if [[ $adminFound == 0 ]]; then
-    deluser "$name" sudo
+      passwd -x30 -n3 -w7 "$name"
+      usermod -L "$name"
+      printTime "$name's password has been given a maximum age of 30 days, minimum of 3 days, and warning of 7 days. $name's account has been locked."
+    fi
   fi
 done
